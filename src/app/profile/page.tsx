@@ -50,8 +50,7 @@ export default function ProfilePage() {
       setUserProfile(data || {
         id: user?.id,
         full_name: user?.user_metadata?.full_name || "",
-        phone: "",
-        is_admin: isAdmin || false
+        phone: ""
       })
     } catch (error) {
       console.error("Error loading profile:", error)
