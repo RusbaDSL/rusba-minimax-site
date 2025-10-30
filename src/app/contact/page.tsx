@@ -47,8 +47,8 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <h3 className="font-semibold mb-1">Phone</h3>
-                      <p className="text-muted-foreground">+234 (0) 123 456 7890</p>
-                      <p className="text-muted-foreground">+234 (0) 987 654 3210</p>
+                      <p className="text-muted-foreground">+234 (0) 812 875 3069</p>
+                      <p className="text-muted-foreground">+234 (0) 805 126 4318</p>
                     </div>
                   </div>
 
@@ -58,8 +58,8 @@ export default function ContactPage() {
                     </div>
                     <div>
                       <h3 className="font-semibold mb-1">Email</h3>
-                      <p className="text-muted-foreground">info@rusbadigital.com</p>
-                      <p className="text-muted-foreground">support@rusbadigital.com</p>
+                      <p className="text-muted-foreground">info@rusbadsl.com.ng</p>
+                      <p className="text-muted-foreground">support@rusbadsl.com.ng</p>
                     </div>
                   </div>
 
@@ -70,9 +70,9 @@ export default function ContactPage() {
                     <div>
                       <h3 className="font-semibold mb-1">Address</h3>
                       <p className="text-muted-foreground">
-                        123 Technology Street<br />
-                        Victoria Island, Lagos<br />
-                        Nigeria
+                        8 Peace Avenue<br />
+                        Rumuigbo, Port Harcourt<br />
+                        Rivers State, Nigeria
                       </p>
                     </div>
                   </div>
@@ -192,9 +192,9 @@ export default function ContactPage() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground">
-                    Installation is straightforward and typically takes 30-60 minutes. 
-                    Each product comes with detailed instructions, and we also offer 
-                    installation support and video tutorials.
+                    Installation requires a trained electrician. Please refer to the 
+                    installation guide included with your product or contact our support team 
+                    for assistance.
                   </p>
                 </CardContent>
               </Card>
@@ -205,9 +205,8 @@ export default function ContactPage() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-muted-foreground">
-                    All our products come with a comprehensive warranty. 
-                    Version 1 and 2 have 1-year warranties, while Version 3 comes 
-                    with a 2-year warranty covering manufacturing defects.
+                    All our products come with a 12-month warranty covering manufacturing defects. 
+                    Please keep your proof of purchase for warranty claims.
                   </p>
                 </CardContent>
               </Card>

@@ -18,7 +18,8 @@ export function ProductForm({ onSubmit, initialData }: ProductFormProps) {
     price: initialData?.price || 0,
     category: initialData?.category || "",
     stock_quantity: initialData?.stock_quantity || 0,
-    image_url: initialData?.image_url || ""
+    image_url: initialData?.image_url || "",
+    featured: initialData?.featured || false
   })
   const [loading, setLoading] = useState(false)
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null)
@@ -31,7 +32,8 @@ export function ProductForm({ onSubmit, initialData }: ProductFormProps) {
       price: initialData?.price || 0,
       category: initialData?.category || "",
       stock_quantity: initialData?.stock_quantity || 0,
-      image_url: initialData?.image_url || ""
+      image_url: initialData?.image_url || "",
+      featured: initialData?.featured || false
     })
   }, [initialData])
 
@@ -74,7 +76,7 @@ export function ProductForm({ onSubmit, initialData }: ProductFormProps) {
     }
   }
 
-  const handleInputChange = (field: string, value: string | number) => {
+  const handleInputChange = (field: string, value: string | number | boolean) => {
     console.log("ProductForm - Input change:", field, value)
     setFormData(prev => ({ ...prev, [field]: value }))
   }
@@ -168,6 +170,23 @@ export function ProductForm({ onSubmit, initialData }: ProductFormProps) {
               placeholder="https://example.com/image.jpg"
             />
           </div>
+
+          <div className="flex items-center space-x-2">
+            <input
+              id="featured"
+              type="checkbox"
+              checked={formData.featured}
+              onChange={(e) => handleInputChange("featured", e.target.checked)}
+              className="w-4 h-4 text-primary bg-background border-gray-300 rounded focus:ring-primary focus:ring-2"
+            />
+            <Label htmlFor="featured" className="text-sm font-medium">
+              Featured Product
+            </Label>
+          </div>
+          
+          <p className="text-xs text-muted-foreground">
+            Check this box if you want this product to appear in the homepage featured products section.
+          </p>
         </CardContent>
         
         <CardFooter className="flex gap-4">

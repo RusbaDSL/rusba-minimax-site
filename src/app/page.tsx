@@ -1,13 +1,46 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardBlue, CardOrange, CardCyan } from "@/components/ui/card"
 import Link from "next/link"
 import { ArrowRight, Smartphone, Globe, Cpu, Zap, Star, Users, Award, Shield } from "lucide-react"
+import { getFeaturedProducts } from "@/lib/supabase-products"
+
+interface Product {
+  id: string
+  name: string
+  description: string | null
+  price: number
+  category: string | null
+  stock_quantity: number
+  image_url: string | null
+  featured: boolean
+  created_at: string
+  updated_at: string
+}
 
 export default function Home() {
+  const [featuredProducts, setFeaturedProducts] = useState<Product[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchFeaturedProducts = async () => {
+      try {
+        const products = await getFeaturedProducts()
+        setFeaturedProducts(products)
+      } catch (error) {
+        console.error('Error fetching featured products:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchFeaturedProducts()
+  }, [])
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -114,42 +147,58 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {[1, 2, 3].map((version) => (
-                <Card key={version} className="group hover:scale-105 transition-all duration-500">
-                  <CardHeader className="pb-3">
-                    <div className="aspect-square glass rounded-lg mb-4 flex items-center justify-center group-hover:scale-105 transition-transform bg-primary/5 group-hover:bg-primary/10">
-                      <Zap className="h-16 w-16 text-primary" />
-                    </div>
-                    <CardTitle className="text-xl">
-                      Water Pump Smart Switch v{version}
-                    </CardTitle>
-                    <CardDescription>
-                      {version === 1 && "Basic WiFi controller for your water pump"}
-                      {version === 2 && "WiFi controller + Screen for enhanced monitoring"}
-                      {version === 3 && "WiFi controller + Indoor Unit (Touchscreen)"}
-                    </CardDescription>
-                  </CardHeader>
-                  
-                  <CardContent>
-                    <p className="text-muted-foreground mb-4">
-                      {version === 1 && "Never run out of water again! Control your pump remotely with our basic WiFi solution."}
-                      {version === 2 && "Never run out of water again! Enhanced with built-in screen for real-time monitoring."}
-                      {version === 3 && "Never run out of water again! Premium touchscreen interface for complete control."}
-                    </p>
+            {loading ? (
+              <div className="text-center">
+                <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                <p className="mt-4 text-muted-foreground">Loading featured products...</p>
+              </div>
+            ) : featuredProducts.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {featuredProducts.map((product) => (
+                  <Card key={product.id} className="group hover:scale-105 transition-all duration-500">
+                    <CardHeader className="pb-3">
+                      <div className="aspect-square glass rounded-lg mb-4 flex items-center justify-center group-hover:scale-105 transition-transform bg-primary/5 group-hover:bg-primary/10">
+                        <Zap className="h-16 w-16 text-primary" />
+                      </div>
+                      <CardTitle className="text-xl">
+                        {product.name}
+                      </CardTitle>
+                      <CardDescription>
+                        {product.description || `${product.category} - Smart Home Automation`}
+                      </CardDescription>
+                    </CardHeader>
                     
-                    <div className="flex items-center justify-between">
-                      <span className="text-2xl font-bold text-primary">₦25,000</span>
-                      <Button className="bg-gradient-to-r from-primary to-primary/90">
-                        <Link href={`/store/product/water-pump-v${version}`}>
-                          View Details
-                        </Link>
-                      </Button>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+                    <CardContent>
+                      <p className="text-muted-foreground mb-4">
+                        {product.description || `High-quality ${product.category} solution for modern smart homes.`}
+                      </p>
+                      
+                      <div className="flex items-center justify-between">
+                        <span className="text-2xl font-bold text-primary">
+                          ₦{(product.price / 100).toLocaleString()}
+                        </span>
+                        <Button className="bg-gradient-to-r from-primary to-primary/90">
+                          <Link href={`/store/product/${product.id}`}>
+                            View Details
+                          </Link>
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center">
+                <Zap className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-xl font-semibold mb-2">No Featured Products</h3>
+                <p className="text-muted-foreground mb-6">
+                  Featured products are not available at the moment. Check back later!
+                </p>
+                <Button asChild>
+                  <Link href="/store">Browse All Products</Link>
+                </Button>
+              </div>
+            )}
 
             <div className="text-center mt-12">
               <Button size="lg" variant="accent" asChild>

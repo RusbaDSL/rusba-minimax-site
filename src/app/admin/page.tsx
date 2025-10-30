@@ -8,19 +8,20 @@ import { ProductForm } from "@/components/admin/product-form"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Plus, Edit, Trash2, Package, AlertCircle, CheckCircle, Database, Shield } from "lucide-react"
-import { getSupabaseProducts, createSupabaseProduct, updateSupabaseProduct, deleteSupabaseProduct, checkUserAdminStatus, makeUserAdmin } from "@/lib/supabase-products"
+import { Plus, Edit, Trash2, Package, AlertCircle, CheckCircle, Database, Shield, Star } from "lucide-react"
+import { getSupabaseProducts, createSupabaseProduct, updateSupabaseProduct, deleteSupabaseProduct, toggleProductFeatured, checkUserAdminStatus, makeUserAdmin } from "@/lib/supabase-products"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 
 interface Product {
   id: string
   name: string
-  description: string
+  description: string | null
   price: number // in kobo
-  category: string
+  category: string | null
   stock_quantity: number
-  image_url?: string
+  image_url: string | null
+  featured: boolean
   created_at: string
   updated_at?: string
 }
@@ -122,6 +123,27 @@ export default function AdminPage() {
       const errorMessage = error?.message || "Failed to save product"
       
       // Provide specific error messages
+      if (errorMessage.includes('Permission denied')) {
+        setMessage("Access denied: You need admin privileges to modify products.")
+      } else {
+        setMessage(errorMessage)
+      }
+      
+      setMessageType("error")
+    }
+  }
+
+  const handleToggleFeatured = async (product: Product) => {
+    try {
+      console.log("Toggling featured status for product:", product.id)
+      await toggleProductFeatured(product.id, !product.featured)
+      setMessage(`Product ${!product.featured ? 'added to' : 'removed from'} featured products!`)
+      setMessageType("success")
+      await loadProducts()
+    } catch (error: any) {
+      console.error("Error toggling featured status:", error)
+      const errorMessage = error?.message || "Failed to update featured status"
+      
       if (errorMessage.includes('Permission denied')) {
         setMessage("Access denied: You need admin privileges to modify products.")
       } else {
@@ -246,7 +268,7 @@ export default function AdminPage() {
               <div>
                 <h1 className="text-3xl font-bold">Admin Dashboard</h1>
                 <p className="text-muted-foreground mt-2">
-                  Manage your products and store using Supabase
+                  Manage your products and featured products
                 </p>
               </div>
               <div className="flex gap-2">
@@ -308,17 +330,38 @@ export default function AdminPage() {
               </div>
             )}
 
+            <div className="mb-6">
+              <h2 className="text-xl font-semibold mb-4">Featured Products ({products.filter(p => p.featured).length})</h2>
+              <p className="text-sm text-muted-foreground mb-4">
+                Toggle the star icon to make products appear in the homepage featured section.
+              </p>
+            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {products.map((product) => (
-                <Card key={product.id} className="group">
+                <Card key={product.id} className="group relative">
+                  {product.featured && (
+                    <div className="absolute -top-2 -right-2 z-10">
+                      <div className="bg-gradient-to-r from-yellow-400 to-yellow-500 text-white rounded-full p-1 shadow-lg">
+                        <Star className="h-4 w-4 fill-current" />
+                      </div>
+                    </div>
+                  )}
+                  
                   <CardHeader className="pb-3">
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <CardTitle className="text-lg line-clamp-2">
                           {product.name}
                         </CardTitle>
-                        <div className="mt-2">
+                        <div className="mt-2 flex items-center gap-2">
                           <Badge variant="secondary">{product.category}</Badge>
+                          {product.featured && (
+                            <Badge variant="default" className="bg-gradient-to-r from-yellow-400 to-yellow-500 text-white">
+                              <Star className="h-3 w-3 mr-1 fill-current" />
+                              Featured
+                            </Badge>
+                          )}
                         </div>
                       </div>
                       <Package className="h-8 w-8 text-muted-foreground group-hover:text-primary transition-colors" />
@@ -327,7 +370,7 @@ export default function AdminPage() {
                   
                   <CardContent>
                     <p className="text-sm text-muted-foreground line-clamp-3 mb-4">
-                      {product.description}
+                      {product.description || `${product.category} - Smart Home Automation`}
                     </p>
                     
                     <div className="flex items-center justify-between">
@@ -340,7 +383,16 @@ export default function AdminPage() {
                         </div>
                       </div>
                       
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleToggleFeatured(product)}
+                          title={product.featured ? "Remove from featured" : "Add to featured"}
+                          className={product.featured ? "border-yellow-400 text-yellow-600 hover:bg-yellow-50" : ""}
+                        >
+                          <Star className={`h-4 w-4 ${product.featured ? "fill-current text-yellow-500" : ""}`} />
+                        </Button>
                         <Button
                           variant="outline"
                           size="sm"
