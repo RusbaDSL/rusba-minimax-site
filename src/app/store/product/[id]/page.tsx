@@ -14,38 +14,6 @@ import { useRouter } from "next/navigation"
 import { getSupabaseProduct } from "@/lib/supabase-products"
 import type { Product } from "@/lib/supabase-products"
 
-// Default specifications for products without specifications in DB
-const defaultSpecifications = {
-  "Power Supply": "AC 220V, 50Hz",
-  "WiFi": "2.4GHz",
-  "Mobile App": "iOS & Android",
-  "Warranty": "1 Year"
-}
-
-// Enhanced specifications based on product name
-const getProductSpecifications = (productName: string) => {
-  if (productName.toLowerCase().includes('version 2')) {
-    return {
-      ...defaultSpecifications,
-      "Display": "2.4\" TFT Touchscreen",
-      "WiFi": "2.4GHz & 5GHz",
-      "Voice Control": "Alexa & Google Assistant"
-    }
-  }
-  if (productName.toLowerCase().includes('version 3')) {
-    return {
-      ...defaultSpecifications,
-      "Display": "4\" TFT Touchscreen (Indoor Unit)",
-      "WiFi": "2.4GHz & 5GHz",
-      "Voice Control": "Alexa & Google Assistant",
-      "Smart Home": "HomeKit, Google Home, SmartThings",
-      "Warranty": "2 Years",
-      "Dimensions": "Indoor Unit: 160mm x 100mm x 25mm"
-    }
-  }
-  return defaultSpecifications
-}
-
 const products = [
   {
     id: "water-pump-v1",
@@ -322,14 +290,18 @@ export default function ProductPage() {
                 {/* Specifications */}
                 <div className="space-y-4">
                   <h3 className="text-xl font-semibold">Specifications</h3>
-                  <div className="grid grid-cols-1 gap-2">
-                    {Object.entries(getProductSpecifications(product.name)).map(([key, value]) => (
-                      <div key={key} className="flex justify-between py-2 border-b border-border/50">
-                        <span className="font-medium">{key}</span>
-                        <span className="text-muted-foreground">{String(value)}</span>
-                      </div>
-                    ))}
-                  </div>
+                  {product.specifications && Object.keys(product.specifications).length > 0 ? (
+                    <div className="grid grid-cols-1 gap-2">
+                      {Object.entries(product.specifications).map(([key, value]) => (
+                        <div key={key} className="flex justify-between py-2 border-b border-border/50">
+                          <span className="font-medium">{key}</span>
+                          <span className="text-muted-foreground">{String(value)}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-muted-foreground italic">No specifications available for this product.</p>
+                  )}
                 </div>
               </div>
             </div>
@@ -343,50 +315,7 @@ export default function ProductPage() {
                     {product.description}
                   </p>
                   
-                  {/* Enhanced description based on product type */}
-                  {product.name.toLowerCase().includes('version 1') && (
-                    <div className="mt-6 p-4 bg-muted/50 rounded-lg">
-                      <h3 className="text-lg font-semibold mb-3">Key Features:</h3>
-                      <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-                        <li>Remote control via smartphone app</li>
-                        <li>Automatic water level monitoring</li>
-                        <li>Scheduled operation</li>
-                        <li>Energy-efficient design</li>
-                        <li>Easy installation</li>
-                        <li>Compatible with most standard water pumps</li>
-                      </ul>
-                    </div>
-                  )}
-                  
-                  {product.name.toLowerCase().includes('version 2') && (
-                    <div className="mt-6 p-4 bg-muted/50 rounded-lg">
-                      <h3 className="text-lg font-semibold mb-3">Enhanced Features:</h3>
-                      <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-                        <li>Built-in touchscreen display</li>
-                        <li>Real-time water level monitoring</li>
-                        <li>Remote control via smartphone app</li>
-                        <li>Automated scheduling</li>
-                        <li>System diagnostics</li>
-                        <li>Voice control compatible</li>
-                        <li>Energy monitoring</li>
-                      </ul>
-                    </div>
-                  )}
-                  
-                  {product.name.toLowerCase().includes('version 3') && (
-                    <div className="mt-6 p-4 bg-muted/50 rounded-lg">
-                      <h3 className="text-lg font-semibold mb-3">Premium Features:</h3>
-                      <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-                        <li>Separate indoor touchscreen control unit</li>
-                        <li>Advanced automation algorithms</li>
-                        <li>Multi-tank monitoring</li>
-                        <li>Energy usage analytics</li>
-                        <li>Backup power support</li>
-                        <li>Advanced scheduling options</li>
-                        <li>Integration with smart home systems</li>
-                      </ul>
-                    </div>
-                  )}
+                  {/* No longer need hardcoded enhanced descriptions - specifications handle this */}
                 </div>
               </div>
             </div>

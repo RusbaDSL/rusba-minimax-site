@@ -5,10 +5,16 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Plus, X } from "lucide-react"
 
 interface ProductFormProps {
   onSubmit?: (product: any) => void
   initialData?: any
+}
+
+interface Specification {
+  key: string
+  value: string
 }
 
 export function ProductForm({ onSubmit, initialData }: ProductFormProps) {
@@ -19,8 +25,14 @@ export function ProductForm({ onSubmit, initialData }: ProductFormProps) {
     category: initialData?.category || "",
     stock_quantity: initialData?.stock_quantity || 0,
     image_url: initialData?.image_url || "",
-    featured: initialData?.featured || false
+    featured: initialData?.featured || false,
+    specifications: initialData?.specifications || {}
   })
+  const [specifications, setSpecifications] = useState<Specification[]>(
+    initialData?.specifications
+      ? Object.entries(initialData.specifications).map(([key, value]) => ({ key, value: String(value) }))
+      : [{ key: "", value: "" }]
+  )
   const [loading, setLoading] = useState(false)
   const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null)
 
@@ -33,8 +45,16 @@ export function ProductForm({ onSubmit, initialData }: ProductFormProps) {
       category: initialData?.category || "",
       stock_quantity: initialData?.stock_quantity || 0,
       image_url: initialData?.image_url || "",
-      featured: initialData?.featured || false
+      featured: initialData?.featured || false,
+      specifications: initialData?.specifications || {}
     })
+    
+    // Update specifications
+    setSpecifications(
+      initialData?.specifications
+        ? Object.entries(initialData.specifications).map(([key, value]) => ({ key, value: String(value) }))
+        : [{ key: "", value: "" }]
+    )
   }, [initialData])
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -52,6 +72,12 @@ export function ProductForm({ onSubmit, initialData }: ProductFormProps) {
     try {
       const productData = {
         ...formData,
+        specifications: specifications.reduce((acc, spec) => {
+          if (spec.key && spec.value) {
+            acc[spec.key] = spec.value
+          }
+          return acc
+        }, {} as Record<string, string>),
         price: Math.round(Number(formData.price) * 100), // Convert to kobo
         updated_at: new Date().toISOString()
       }
@@ -79,6 +105,22 @@ export function ProductForm({ onSubmit, initialData }: ProductFormProps) {
   const handleInputChange = (field: string, value: string | number | boolean) => {
     console.log("ProductForm - Input change:", field, value)
     setFormData(prev => ({ ...prev, [field]: value }))
+  }
+
+  const handleSpecificationChange = (index: number, field: 'key' | 'value', value: string) => {
+    const updatedSpecs = specifications.map((spec, i) =>
+      i === index ? { ...spec, [field]: value } : spec
+    )
+    setSpecifications(updatedSpecs)
+  }
+
+  const addSpecification = () => {
+    setSpecifications([...specifications, { key: "", value: "" }])
+  }
+
+  const removeSpecification = (index: number) => {
+    const updatedSpecs = specifications.filter((_, i) => i !== index)
+    setSpecifications(updatedSpecs.length > 0 ? updatedSpecs : [{ key: "", value: "" }])
   }
 
   return (
@@ -183,10 +225,55 @@ export function ProductForm({ onSubmit, initialData }: ProductFormProps) {
               Featured Product
             </Label>
           </div>
-          
-          <p className="text-xs text-muted-foreground">
-            Check this box if you want this product to appear in the homepage featured products section.
-          </p>
+
+          {/* Specifications Section */}
+          <div className="space-y-4 pt-4 border-t">
+            <div className="flex items-center justify-between">
+              <Label className="text-base font-semibold">Product Specifications</Label>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={addSpecification}
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Add Specification
+              </Button>
+            </div>
+            
+            <div className="space-y-2">
+              {specifications.map((spec, index) => (
+                <div key={index} className="flex gap-2">
+                  <Input
+                    placeholder="Specification name (e.g., Power Supply)"
+                    value={spec.key}
+                    onChange={(e) => handleSpecificationChange(index, 'key', e.target.value)}
+                    className="flex-1"
+                  />
+                  <Input
+                    placeholder="Value (e.g., AC 220V, 50Hz)"
+                    value={spec.value}
+                    onChange={(e) => handleSpecificationChange(index, 'value', e.target.value)}
+                    className="flex-1"
+                  />
+                  {specifications.length > 1 && (
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon"
+                      onClick={() => removeSpecification(index)}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  )}
+                </div>
+              ))}
+            </div>
+            
+            <p className="text-xs text-muted-foreground">
+              Add key specifications that customers need to know about this product.
+            </p>
+          </div>
         </CardContent>
         
         <CardFooter className="flex gap-4">

@@ -9,6 +9,7 @@ export interface Product {
   stock_quantity: number
   image_url: string | null
   featured: boolean
+  specifications: Record<string, string>
   created_at: string
   updated_at: string
 }
@@ -89,13 +90,17 @@ export async function createSupabaseProduct(product: Omit<Product, 'id' | 'creat
       throw new Error('Access denied. Admin privileges required.')
     }
 
+    // Ensure specifications are included with default empty object if not provided
+    const productData = {
+      ...product,
+      specifications: product.specifications || {},
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    }
+
     const { data, error } = await supabase
       .from('products')
-      .insert([{
-        ...product,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString()
-      }])
+      .insert([productData])
       .select()
       .single()
 
