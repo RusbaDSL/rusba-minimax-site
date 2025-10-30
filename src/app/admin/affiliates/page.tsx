@@ -75,15 +75,28 @@ export default function AdminAffiliates() {
 
   const fetchAffiliates = async () => {
     try {
-      const response = await fetch("/api/admin/affiliates")
-      const data = await response.json()
+      // For testing, let's fetch directly without API calls
+      console.log("🔍 Fetching affiliates directly...")
+      
+      // Use direct Supabase client for now
+      const { supabase } = await import("@/lib/supabase")
+      
+      const { data, error } = await supabase
+        .from('affiliate_dashboard')
+        .select('*')
+        .limit(10)
 
-      if (response.ok) {
-        setAffiliates(data.data || [])
-      } else {
-        setError(data.error || "Failed to fetch affiliates")
+      if (error) {
+        console.error('❌ Error fetching affiliates:', error)
+        setError(`Database error: ${error.message}`)
+        return
       }
+
+      console.log('✅ Affiliates fetched successfully:', data?.length || 0, 'affiliates found')
+      setAffiliates(data || [])
+      
     } catch (error: any) {
+      console.error("❌ Fetch affiliates error:", error)
       setError(error.message || "Failed to fetch affiliates")
     } finally {
       setLoading(false)

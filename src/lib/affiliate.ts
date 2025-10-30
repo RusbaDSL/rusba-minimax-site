@@ -1,5 +1,5 @@
 import { supabase } from "./supabase"
-import { EmailTemplates, sendEmail, generateAffiliateApplicationEmail, generateAffiliateApprovalEmail, generateAffiliateRejectionEmail } from "@/lib/email"
+import { EmailTemplates, sendEmail, generateAffiliateApplicationEmail, generateAffiliateApprovalEmail, generateAffiliateRejectionEmail, isEmailServiceAvailable } from "@/lib/email"
 
 export interface AffiliateProfile {
   id: string
@@ -214,9 +214,11 @@ export async function applyForAffiliate(
       throw new Error(`Failed to apply for affiliate: ${error.message}`)
     }
 
-    // Send application email
+    // Send application email (only if email service is available)
     try {
-      await sendAffiliateApplicationEmail(userId)
+      if (isEmailServiceAvailable()) {
+        await sendAffiliateApplicationEmail(userId)
+      }
     } catch (emailError) {
       console.warn('Failed to send application email:', emailError)
       // Don't throw error for email failure
@@ -306,9 +308,11 @@ export async function approveAffiliate(userId: string): Promise<AffiliateProfile
       throw new Error(`Failed to approve affiliate: ${error.message}`)
     }
 
-    // Send approval email
+    // Send approval email (only if email service is available)
     try {
-      await sendAffiliateApprovalEmail(userId, affiliateCode, 5) // Default 5% commission
+      if (isEmailServiceAvailable()) {
+        await sendAffiliateApprovalEmail(userId, affiliateCode, 5) // Default 5% commission
+      }
     } catch (emailError) {
       console.warn('Failed to send approval email:', emailError)
       // Don't throw error for email failure
@@ -354,9 +358,11 @@ export async function rejectAffiliate(userId: string): Promise<AffiliateProfile>
       throw new Error(`Failed to reject affiliate: ${error.message}`)
     }
 
-    // Send rejection email
+    // Send rejection email (only if email service is available)
     try {
-      await sendAffiliateRejectionEmail(userId)
+      if (isEmailServiceAvailable()) {
+        await sendAffiliateRejectionEmail(userId)
+      }
     } catch (emailError) {
       console.warn('Failed to send rejection email:', emailError)
       // Don't throw error for email failure

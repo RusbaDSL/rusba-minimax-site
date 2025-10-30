@@ -1,6 +1,27 @@
 import { Resend } from 'resend'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+// Lazy initialize Resend client to avoid errors during build/SSR
+let resend: Resend | null = null
+
+function getResendClient(): Resend {
+  if (!resend) {
+    const apiKey = process.env.RESEND_API_KEY
+    console.log('🔑 Resend API Key Status:', apiKey ? `Available (${apiKey.substring(0, 10)}...)` : 'Not found')
+    
+    if (!apiKey) {
+      throw new Error('RESEND_API_KEY environment variable is not set')
+    }
+    
+    try {
+      resend = new Resend(apiKey)
+      console.log('✅ Resend client initialized successfully')
+    } catch (error) {
+      console.error('❌ Failed to initialize Resend client:', error)
+      throw error
+    }
+  }
+  return resend
+}
 
 interface EmailTemplate {
   subject: string
@@ -344,7 +365,8 @@ export async function sendEmail(
   from: string = 'noreply@rusbadigitalsolutions.com'
 ): Promise<{ success: boolean; error?: string }> {
   try {
-    const result = await resend.emails.send({
+    const resendClient = getResendClient()
+    const result = await resendClient.emails.send({
       from,
       to,
       subject: template.subject,
@@ -360,7 +382,24 @@ export async function sendEmail(
     return { success: true }
   } catch (error: any) {
     console.error('Email sending error:', error)
+    // If it's an API key error, don't crash the entire system
+    if (error.message.includes('Missing API key') || error.message.includes('RESEND_API_KEY')) {
+      console.warn('Email functionality disabled: API key not configured')
+      return { success: false, error: 'Email service not configured' }
+    }
     return { success: false, error: error.message }
+  }
+}
+
+// Check if email service is available
+export function isEmailServiceAvailable(): boolean {
+  try {
+    getResendClient()
+    console.log('✅ Email service is available')
+    return true
+  } catch (error: any) {
+    console.warn('⚠️ Email service not available:', error?.message || 'Unknown error')
+    return false
   }
 }
 

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { ShoppingCart } from "lucide-react"
 import Link from "next/link"
+import { getLocalCart } from "@/lib/cart"
 
 export function CartButton() {
   const [cartCount, setCartCount] = useState(0)
@@ -11,9 +12,8 @@ export function CartButton() {
   useEffect(() => {
     // Listen for cart updates
     const handleCartUpdate = () => {
-      const cart = JSON.parse(localStorage.getItem("cart") || "[]")
-      const count = cart.reduce((total: number, item: any) => total + item.quantity, 0)
-      setCartCount(count)
+      const cart = getLocalCart()
+      setCartCount(cart.itemCount)
     }
 
     // Listen for cart changes

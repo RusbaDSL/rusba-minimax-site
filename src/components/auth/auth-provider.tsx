@@ -35,18 +35,39 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(false)
       
       if (session?.user) {
-        // Check if user is admin
+        // Check if user is admin using the new approach
         try {
-          const { data: profile } = await supabase
-            .from("user_profiles")
-            .select("is_admin")
+          const { data: adminUser } = await supabase
+            .from("admin_list")
+            .select("id")
             .eq("id", session.user.id)
             .single()
-          
-          setIsAdmin(profile?.is_admin || false)
+
+          if (adminUser) {
+            setIsAdmin(true)
+          } else {
+            // Fallback to old user_profiles check for backwards compatibility
+            const { data: profile } = await supabase
+              .from("user_profiles")
+              .select("is_admin")
+              .eq("id", session.user.id)
+              .single()
+            
+            setIsAdmin(profile?.is_admin || false)
+          }
         } catch (error) {
-          // If user_profiles table doesn't exist, default to not admin
-          setIsAdmin(false)
+          // If admin_list table doesn't exist or query fails, try user_profiles
+          try {
+            const { data: profile } = await supabase
+              .from("user_profiles")
+              .select("is_admin")
+              .eq("id", session.user.id)
+              .single()
+            
+            setIsAdmin(profile?.is_admin || false)
+          } catch (fallbackError) {
+            setIsAdmin(false)
+          }
         }
       } else {
         setIsAdmin(false)
