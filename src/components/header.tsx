@@ -18,32 +18,30 @@ export function Header() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center">
-            <Link href="/" className="flex items-center space-x-3 hover:opacity-80 transition-all duration-300 group">
+            <Link href="/" className="flex items-center hover:opacity-80 transition-all duration-300 group">
               <div className="relative">
-                <Image 
-                  src="/rusba-logo.png" 
-                  alt="Rusba Digital Solutions" 
-                  width={40} 
+                <Image
+                  src="/rusba-logo.png"
+                  alt="Rusba Digital Solutions"
+                  width={40}
                   height={40}
-                  className="h-8 w-auto group-hover:scale-110 transition-transform duration-300"
+                  className="h-8 w-8 group-hover:scale-110 transition-transform duration-300"
                 />
                 <div className="absolute inset-0 bg-gradient-to-br from-primary/20 to-secondary/20 rounded-full blur-xl group-hover:blur-2xl transition-all duration-300 opacity-0 group-hover:opacity-100"></div>
               </div>
-              <span className="text-xl font-bold gradient-text">
-                Rusba Digital Solutions
-              </span>
             </Link>
           </div>
 
+          {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center space-x-2">
-            <Link 
-              href="/" 
+            <Link
+              href="/"
               className="px-4 py-2 text-sm font-medium text-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-all duration-300 hover:scale-105 border border-transparent hover:border-primary/20"
             >
               Home
             </Link>
-            <Link 
-              href="/store" 
+            <Link
+              href="/store"
               className="px-4 py-2 text-sm font-medium text-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-all duration-300 hover:scale-105 border border-transparent hover:border-primary/20"
             >
               Store
@@ -66,111 +64,206 @@ export function Header() {
             )}
           </nav>
 
-          <div className="flex items-center space-x-3">
-            <ThemeToggle />
-            <CartButton />
-            {user ? (
-              <div className="flex items-center space-x-2">
-                <Button variant="ghost" size="sm" asChild className="hover:bg-primary/10 hover:text-primary">
-                  <Link href="/profile">
-                    <User className="h-4 w-4" />
-                    <span className="sr-only">Profile</span>
-                  </Link>
-                </Button>
-                {isAdmin && (
-                  <Button variant="ghost" size="sm" asChild className="hover:bg-secondary/10 hover:text-secondary">
-                    <Link href="/admin">
-                      <Settings className="h-4 w-4" />
-                      <span className="sr-only">Admin</span>
+          <div className="flex items-center space-x-2">
+            {/* Desktop actions */}
+            <div className="hidden md:flex items-center space-x-2">
+              <CartButton />
+              <ThemeToggle />
+              {user ? (
+                <div className="flex items-center space-x-2">
+                  <Button variant="ghost" size="sm" asChild className="hover:bg-primary/10 hover:text-primary">
+                    <Link href="/profile">
+                      <User className="h-4 w-4" />
+                      <span className="sr-only">Profile</span>
                     </Link>
                   </Button>
-                )}
-                <Button 
-                  variant="ghost" 
-                  size="sm" 
-                  onClick={() => signOut()}
-                  title="Sign out"
-                  className="hover:bg-red-500/10 hover:text-red-500"
-                >
-                  <LogOut className="h-4 w-4" />
-                  <span className="sr-only">Sign out</span>
-                </Button>
-              </div>
-            ) : (
-              <div className="flex items-center space-x-2">
-                <Button variant="ghost" size="sm" asChild className="hover:bg-primary/10 hover:text-primary">
-                  <Link href="/auth/login">Login</Link>
-                </Button>
-                <Button size="sm" asChild className="bg-gradient-to-r from-primary to-primary/90">
-                  <Link href="/auth/signup">Sign Up</Link>
-                </Button>
-              </div>
-            )}
-            <Button
-              variant="ghost"
-              size="sm"
-              className="md:hidden hover:bg-primary/10"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-            >
-              <Menu className="h-4 w-4" />
-              <span className="sr-only">Menu</span>
-            </Button>
+                  {isAdmin && (
+                    <Button variant="ghost" size="sm" asChild className="hover:bg-secondary/10 hover:text-secondary">
+                      <Link href="/admin">
+                        <Settings className="h-4 w-4" />
+                        <span className="sr-only">Admin</span>
+                      </Link>
+                    </Button>
+                  )}
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => signOut()}
+                    title="Sign out"
+                    className="hover:bg-red-500/10 hover:text-red-500"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    <span className="sr-only">Sign out</span>
+                  </Button>
+                </div>
+              ) : (
+                <div className="flex items-center space-x-2">
+                  <Button variant="ghost" size="sm" asChild className="hover:bg-primary/10 hover:text-primary">
+                    <Link href="/auth/login">Login</Link>
+                  </Button>
+                  <Button size="sm" asChild className="bg-gradient-to-r from-primary to-primary/90">
+                    <Link href="/auth/signup">Sign Up</Link>
+                  </Button>
+                </div>
+              )}
+            </div>
+
+            {/* Mobile menu button */}
+            <div className="flex items-center space-x-2 md:hidden">
+              <CartButton />
+              <ThemeToggle />
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                className="hover:bg-primary/10"
+              >
+                <Menu className="h-4 w-4" />
+                <span className="sr-only">Menu</span>
+              </Button>
+            </div>
           </div>
         </div>
 
         {isMenuOpen && (
           <div className="md:hidden">
             <nav className="flex flex-col space-y-3 pb-4">
-              <Link 
-                href="/" 
-                className="px-4 py-3 text-sm font-medium text-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-all duration-300 border border-transparent hover:border-primary/20"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Home
-              </Link>
-              <Link 
-                href="/store" 
-                className="px-4 py-3 text-sm font-medium text-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-all duration-300 border border-transparent hover:border-primary/20"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Store
-              </Link>
-              {isAdmin && (
-                <>
+              {/* Main Navigation */}
+              <div className="border-b border-border/50 pb-4 mb-4">
+                <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Navigation</h3>
+                <Link
+                  href="/"
+                  className="block px-4 py-3 text-sm font-medium text-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-all duration-300 border border-transparent hover:border-primary/20"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Home
+                </Link>
+                <Link
+                  href="/store"
+                  className="block px-4 py-3 text-sm font-medium text-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-all duration-300 border border-transparent hover:border-primary/20"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Store
+                </Link>
+                <Link
+                  href="/help"
+                  className="block px-4 py-3 text-sm font-medium text-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-all duration-300 border border-transparent hover:border-primary/20"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Help Center
+                </Link>
+                <Link
+                  href="/contact"
+                  className="block px-4 py-3 text-sm font-medium text-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-all duration-300 border border-transparent hover:border-primary/20"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Contact
+                </Link>
+              </div>
+
+              {/* User Actions */}
+              {user ? (
+                <div className="border-b border-border/50 pb-4 mb-4">
+                  <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Account</h3>
                   <Link
-                    href="/admin"
-                    className="px-4 py-3 text-sm font-medium text-secondary hover:text-secondary hover:bg-secondary/10 rounded-lg transition-all duration-300 border border-transparent hover:border-secondary/20"
+                    href="/profile"
+                    className="flex items-center px-4 py-3 text-sm font-medium text-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-all duration-300 border border-transparent hover:border-primary/20"
                     onClick={() => setIsMenuOpen(false)}
                   >
-                    Admin
+                    <User className="h-4 w-4 mr-3" />
+                    Profile
                   </Link>
-                  <Link
-                    href="/admin/affiliates"
-                    className="px-4 py-3 text-sm font-medium text-accent hover:text-accent hover:bg-accent/10 rounded-lg transition-all duration-300 border border-transparent hover:border-accent/20"
-                    onClick={() => setIsMenuOpen(false)}
+                  {isAdmin && (
+                    <>
+                      <Link
+                        href="/admin"
+                        className="flex items-center px-4 py-3 text-sm font-medium text-secondary hover:text-secondary hover:bg-secondary/10 rounded-lg transition-all duration-300 border border-transparent hover:border-secondary/20"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        <Settings className="h-4 w-4 mr-3" />
+                        Admin Dashboard
+                      </Link>
+                      <Link
+                        href="/admin/affiliates"
+                        className="flex items-center px-4 py-3 text-sm font-medium text-accent hover:text-accent hover:bg-accent/10 rounded-lg transition-all duration-300 border border-transparent hover:border-accent/20"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        <Settings className="h-4 w-4 mr-3" />
+                        Manage Affiliates
+                      </Link>
+                      <Link
+                        href="/affiliate/signup"
+                        className="flex items-center px-4 py-3 text-sm font-medium text-accent hover:text-accent hover:bg-accent/10 rounded-lg transition-all duration-300 border border-transparent hover:border-accent/20"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        <Settings className="h-4 w-4 mr-3" />
+                        Affiliate Program
+                      </Link>
+                    </>
+                  )}
+                  <button
+                    onClick={() => {
+                      signOut()
+                      setIsMenuOpen(false)
+                    }}
+                    className="w-full flex items-center px-4 py-3 text-sm font-medium text-foreground hover:text-red-500 hover:bg-red-500/10 rounded-lg transition-all duration-300 border border-transparent hover:border-red-500/20"
                   >
-                    Affiliates
-                  </Link>
-                </>
-              )}
-              {!user && (
-                <>
-                  <Link 
-                    href="/auth/login" 
-                    className="px-4 py-3 text-sm font-medium text-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-all duration-300 border border-transparent hover:border-primary/20"
+                    <LogOut className="h-4 w-4 mr-3" />
+                    Sign Out
+                  </button>
+                </div>
+              ) : (
+                <div className="border-b border-border/50 pb-4 mb-4">
+                  <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Account</h3>
+                  <Link
+                    href="/auth/login"
+                    className="block px-4 py-3 text-sm font-medium text-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-all duration-300 border border-transparent hover:border-primary/20"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Login
                   </Link>
-                  <Link 
-                    href="/auth/signup" 
-                    className="px-4 py-3 text-sm font-medium bg-gradient-to-r from-primary to-primary/90 text-primary-foreground rounded-lg transition-all duration-300 hover:scale-105 shadow-lg"
+                  <Link
+                    href="/auth/signup"
+                    className="block px-4 py-3 text-sm font-medium bg-gradient-to-r from-primary to-primary/90 text-primary-foreground rounded-lg transition-all duration-300 hover:scale-105 shadow-lg"
                     onClick={() => setIsMenuOpen(false)}
                   >
                     Sign Up
                   </Link>
-                </>
+                  <Link
+                    href="/affiliate/signup"
+                    className="block px-4 py-3 text-sm font-medium text-accent hover:text-accent hover:bg-accent/10 rounded-lg transition-all duration-300 border border-transparent hover:border-accent/20"
+                    onClick={() => setIsMenuOpen(false)}
+                  >
+                    Become an Affiliate
+                  </Link>
+                </div>
               )}
+
+              {/* Legal Links */}
+              <div>
+                <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">Legal</h3>
+                <Link
+                  href="/privacy"
+                  className="block px-4 py-3 text-sm font-medium text-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-all duration-300 border border-transparent hover:border-primary/20"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Privacy Policy
+                </Link>
+                <Link
+                  href="/terms"
+                  className="block px-4 py-3 text-sm font-medium text-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-all duration-300 border border-transparent hover:border-primary/20"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Terms of Service
+                </Link>
+                <Link
+                  href="/shipping"
+                  className="block px-4 py-3 text-sm font-medium text-foreground hover:text-primary hover:bg-primary/10 rounded-lg transition-all duration-300 border border-transparent hover:border-primary/20"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Shipping Info
+                </Link>
+              </div>
             </nav>
           </div>
         )}
