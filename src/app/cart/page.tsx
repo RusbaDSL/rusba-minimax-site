@@ -129,8 +129,22 @@ export default function CartPage() {
                     <CardContent className="p-6">
                       <div className="flex items-center space-x-4">
                         {/* Product Image */}
-                        <div className="w-20 h-20 bg-muted rounded-lg flex items-center justify-center flex-shrink-0">
-                          <ShoppingCart className="h-8 w-8 text-muted-foreground" />
+                        <div className="w-20 h-20 bg-muted rounded-lg overflow-hidden flex-shrink-0">
+                          {item.image ? (
+                            <img
+                              src={item.image}
+                              alt={item.name}
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                const target = e.target as HTMLImageElement;
+                                target.style.display = 'none';
+                                target.nextElementSibling?.classList.remove('hidden');
+                              }}
+                            />
+                          ) : null}
+                          <div className={`w-full h-full flex items-center justify-center ${item.image ? 'hidden' : ''}`}>
+                            <ShoppingCart className="h-8 w-8 text-muted-foreground" />
+                          </div>
                         </div>
 
                         {/* Product Info */}

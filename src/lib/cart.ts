@@ -209,7 +209,7 @@ export async function loadCartFromSupabase(userId: string): Promise<Cart> {
       } | null;
     }
 
-    const items: CartItem[] = cartData.cart_items.map((item: SupabaseCartItem) => ({
+    const items: CartItem[] = cartData.cart_items.map((item: any) => ({
       id: `${item.product_id}-${Date.now()}`,
       product_id: item.product_id,
       name: item.products?.name || "Unknown Product",

@@ -3,13 +3,13 @@ import { supabase } from "./supabase"
 export async function grantAdminPrivilege(email: string): Promise<{ success: boolean; message: string }> {
   try {
     // Get the user ID from email
-    const { data: { user }, error: userError } = await supabase.auth.admin.listUsers()
+    const { data: { users }, error: userError } = await supabase.auth.admin.listUsers()
     
     if (userError) {
       return { success: false, message: "Unable to access user management" }
     }
 
-    const targetUser = user.users.find(u => u.email === email)
+    const targetUser = users.find((u: any) => u.email === email)
     if (!targetUser) {
       return { success: false, message: "User not found" }
     }
@@ -42,13 +42,13 @@ export async function grantAdminPrivilege(email: string): Promise<{ success: boo
 export async function revokeAdminPrivilege(email: string): Promise<{ success: boolean; message: string }> {
   try {
     // Get the user ID from email
-    const { data: { user }, error: userError } = await supabase.auth.admin.listUsers()
+    const { data: { users }, error: userError } = await supabase.auth.admin.listUsers()
     
     if (userError) {
       return { success: false, message: "Unable to access user management" }
     }
 
-    const targetUser = user.users.find(u => u.email === email)
+    const targetUser = users.find((u: any) => u.email === email)
     if (!targetUser) {
       return { success: false, message: "User not found" }
     }

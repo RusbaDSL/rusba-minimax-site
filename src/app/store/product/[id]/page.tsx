@@ -234,9 +234,25 @@ export default function ProductPage() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
               {/* Product Image */}
               <div className="space-y-4">
-                <div className="aspect-square bg-muted rounded-lg flex items-center justify-center">
-                  <Zap className="h-32 w-32 text-primary" />
+                <div className="aspect-square bg-muted rounded-lg overflow-hidden">
+                  {product.image_url ? (
+                    <img
+                      src={product.image_url}
+                      alt={product.name}
+                      className="w-full h-full object-cover"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
+                        target.nextElementSibling?.classList.remove('hidden');
+                      }}
+                    />
+                  ) : null}
+                  <div className={`w-full h-full flex items-center justify-center ${product.image_url ? 'hidden' : ''}`}>
+                    <Zap className="h-32 w-32 text-primary" />
+                  </div>
                 </div>
+                
+                {/* Image Gallery - for future enhancement */}
                 <div className="flex gap-2">
                   <div className="aspect-square w-20 bg-muted rounded flex items-center justify-center cursor-pointer hover:bg-muted/80">
                     <Zap className="h-8 w-8 text-primary" />

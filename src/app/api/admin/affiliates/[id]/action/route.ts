@@ -4,7 +4,7 @@ import { approveAffiliate, rejectAffiliate } from "@/lib/affiliate"
 
 export async function POST(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const supabase = createClient()
@@ -33,6 +33,7 @@ export async function POST(
 
     const body = await request.json()
     const { action, reason } = body
+    const { id } = await params
 
     if (!action || !['approve', 'reject', 'suspend'].includes(action)) {
       return NextResponse.json(
@@ -44,10 +45,10 @@ export async function POST(
     let result
     switch (action) {
       case 'approve':
-        result = await approveAffiliate(params.id)
+        result = await approveAffiliate(id)
         break
       case 'reject':
-        result = await rejectAffiliate(params.id)
+        result = await rejectAffiliate(id)
         break
       case 'suspend':
         // Suspend affiliate
@@ -57,7 +58,7 @@ export async function POST(
             affiliate_status: 'suspended',
             updated_at: new Date().toISOString()
           })
-          .eq('id', params.id)
+          .eq('id', id)
           .select()
           .single()
 

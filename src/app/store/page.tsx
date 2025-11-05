@@ -95,8 +95,22 @@ export default function StorePage() {
                 {products.map((product) => (
                   <Card key={product.id} className="group hover:shadow-lg transition-shadow glass-card">
                     <CardHeader className="pb-3">
-                      <div className="aspect-square bg-muted rounded-lg mb-4 flex items-center justify-center group-hover:scale-105 transition-transform">
-                        <Zap className="h-16 w-16 text-primary" />
+                      <div className="aspect-square bg-muted rounded-lg mb-4 overflow-hidden group-hover:scale-105 transition-transform">
+                        {product.image_url ? (
+                          <img
+                            src={product.image_url}
+                            alt={product.name}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.style.display = 'none';
+                              target.nextElementSibling?.classList.remove('hidden');
+                            }}
+                          />
+                        ) : null}
+                        <div className={`w-full h-full flex items-center justify-center ${product.image_url ? 'hidden' : ''}`}>
+                          <Zap className="h-16 w-16 text-primary" />
+                        </div>
                       </div>
                       <CardTitle className="text-lg line-clamp-2">
                         {product.name}
