@@ -157,8 +157,22 @@ export default function Home() {
                 {featuredProducts.map((product) => (
                   <Card key={product.id} className="group hover:scale-105 transition-all duration-500">
                     <CardHeader className="pb-3">
-                      <div className="aspect-square glass rounded-lg mb-4 flex items-center justify-center group-hover:scale-105 transition-transform bg-primary/5 group-hover:bg-primary/10">
-                        <Zap className="h-16 w-16 text-primary" />
+                      <div className="aspect-square glass rounded-lg mb-4 overflow-hidden group-hover:scale-105 transition-transform bg-primary/5 group-hover:bg-primary/10">
+                        {product.image_url ? (
+                          <img
+                            src={product.image_url}
+                            alt={product.name}
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement;
+                              target.style.display = 'none';
+                              target.nextElementSibling?.classList.remove('hidden');
+                            }}
+                          />
+                        ) : null}
+                        <div className={`w-full h-full flex items-center justify-center ${product.image_url ? 'hidden' : ''}`}>
+                          <Zap className="h-16 w-16 text-primary" />
+                        </div>
                       </div>
                       <CardTitle className="text-xl">
                         {product.name}
